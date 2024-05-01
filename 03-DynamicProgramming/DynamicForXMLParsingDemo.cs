@@ -46,7 +46,7 @@ namespace DynamicProgramming
 
     internal class DynamicForXMLParsingDemo
     {
-        public static void Main(string[] args)
+        public static void Demo(string[] args)
         {
             var xml = @"
 <people>

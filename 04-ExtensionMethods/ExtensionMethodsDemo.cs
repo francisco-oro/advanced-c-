@@ -81,7 +81,7 @@ namespace ExtensionMethods
 
     public class ExtensionMethodsDemo
     {
-        public static void Main(string[] args)
+        public static void Demo(string[] args)
         {
             Func<int> calculate = delegate
             {

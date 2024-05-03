@@ -32,7 +32,7 @@ namespace ExtensionMethods
     }
     internal class ExtensionMethodsAndPersistenceDemo
     {
-        public static void Main(string[] args)
+        public static void Demo(string[] args)
         {
             string s = "Meaning of life";
             s.SetTag(42);

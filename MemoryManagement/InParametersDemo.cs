@@ -65,7 +65,7 @@
 
             //ref var messWithOrigin = ref Point.Origin;
             ref readonly var originRef = ref Point.Origin;
-            originRef++;
+            //originRef++;
         }
         static void Demo(string[] args)
         {

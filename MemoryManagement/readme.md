@@ -45,3 +45,10 @@
 	- Cannot capture ref struct vars in lambda expressions or local functions
 - Rules prevent a ref struct from being promoted to the managed heap 
 - *Waning:* in .NET Framework, current `Span<T>` in `System.Memory` NuGet is not a ref struct, therefore all of those limitations have not yet kicked in. 
+
+## Summary 
+- Value types can be passed by value or by reference
+- `in` keyword = pass by reference, readonly
+- `ref readonly` lets you expoe a memeber as a readonly reference
+- `ref struct` is a special-case structure with a lot of usage restricions
+- `Span<T>` is a `ref struct` (in .NET Core) that acts as a view into a collection

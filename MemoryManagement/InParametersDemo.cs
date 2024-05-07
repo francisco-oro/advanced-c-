@@ -63,8 +63,9 @@
 
             Point copyOfOrigin = Point.Origin; //by-value
 
-            ref var messWithOrigin = ref Point.Origin;
-            messWithOrigin++;
+            //ref var messWithOrigin = ref Point.Origin;
+            ref readonly var originRef = ref Point.Origin;
+            originRef++;
         }
         static void Demo(string[] args)
         {

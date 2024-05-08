@@ -8,25 +8,36 @@ using System.Threading.Tasks;
 
 namespace AssortedTopics
 {
+    public enum WorkflowResult
+    {
+        Success, Failure
+    }
     public class QuadraticEquationSolver
     {
         // ax^2 + bx + c = 0 
-        public Tuple<Complex, Complex> Start(double a, double b, double c)
+        public WorkflowResult Start(double a, double b, double c, out Tuple<Complex, Complex> result)
         {
             var disc = b * b - 4 * a * c;
             if (disc < 0)
-                return SolveComplex(a, b, c, disc);
+            {
+                result = null;
+                return WorkflowResult.Failure;
+            }
+            //return SolveComplex(a, b, c, disc);
             else
-                return SolveSimple(a, b, c, disc);
+            {
+                return SolveSimple(a, b, c, disc, out result);
+            }
         }
 
-        private Tuple<Complex, Complex> SolveSimple(double d, double d1, double d2, double disc)
+        private WorkflowResult SolveSimple(double d, double d1, double d2, double disc, out Tuple<Complex, Complex> result)
         {
             var rootDisc = Math.Sqrt(disc);
-            return Tuple.Create(
+            result = Tuple.Create(
                 new Complex((-d2 + rootDisc) / (2 * d1), 0),
                 new Complex((-d2 - rootDisc) / (2 * d1), 0));
 
+            return WorkflowResult.Success;
         }
 
 
@@ -43,7 +54,8 @@ namespace AssortedTopics
         static void Main(string[] args)
         {
             var solver = new QuadraticEquationSolver();
-            var solutions = solver.Start(1, 10, 16);
+            Tuple<Complex, Complex> solution;
+            var flag = solver.Start(1, 10, 16, out solution);
         }
     }
 }

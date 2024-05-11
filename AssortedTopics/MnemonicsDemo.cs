@@ -8,9 +8,14 @@ namespace AssortedTopics
 {
     public class Person1
     {
-        private double fieldname;
-        public string MyProperty { get; set; }
-        
+        public double Age { get; set; }
+        public string Name { get; set; }
+
+        public Person1(double age, string name)
+        {
+            Age = age;
+            Name = name;
+        }
     }
     internal class MnemonicsDemo
     {

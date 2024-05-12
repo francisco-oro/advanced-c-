@@ -1,6 +1,4 @@
-# Numerics Section Cheat Sheet
-
-## Integral Types and Limits
+# Integral Types and Limits
 ![integral_types_and_limits](assets/integral_types_and_limits.png)
 
 ## Integer specifics
@@ -43,6 +41,87 @@ Run-time behavior:
 - By default, overflow is disallowed at compile-time (if found) and is totally allowed at runtime
 - We can reverse both of these situations
 - Allow obvious overflow at compile-time:
+
+## Detect Overflow Everywhere
+
+![detec](assets/detec.png)
+
+- Project Settings => Build => Advanced... => Check for arithmetic overflow/underflow
+- This will throw on all overflow situations
+- Can wrap in ordinary try-catch (no checked context needed) to catch `OverflowException`
+
+
+# BigInteger
+- An integer of arbitrary size
+- Lives in System.Runtime.Numerics 
+- Similarities compared to integer value types: 
+	- Also throws a `DivideByZeroException`
+- Differences: 
+	- Is a struct
+	- Cannot overflow 
+	- Is immutable
+		- x++ does not modify underlying object, instead
+		- creates new object that replaces the original one
+		- In other words, BigInteger behaves just as string does
+		- Performance implications!
+
+# Floating-Point Values
+- Only two data types 
+- Both are signed types standardized under IEEE754
+- float (System.Single)
+	- 32 bits (single-precision floating-point)
+	- -3.40282347E+308 to 1.7976931348623157E+308
+
+## Special States 
+- FP calculations do not cause exceptions 
+- Division by zero is allowed!
+	- Does not cause an exception
+- Floating-point types define the idea of infinity 
+	- 1.0 / 0.0 gives infinity (double.PositiveInfinity) 
+	- -1.0f / 0.0 gives -infinity (double.PositiveInfinity)
+- Arithmetic operations on infinity give infinity 
+	- `double.PositiveInfinity + 1 == double.PositiveInfinity `
+	- But you can flip the sign 
+		- `1.0 * double.NegativeInfinity == double.PositiveInfinity*`
+		- 
+- But there is a special case.. 
+
+## Not a Number (NaN)
+- 0.0/0.0 and infinity/infinity gives the value of `NaN` (not a number)
+- `NaN` is special in that
+	- It has no sign
+	- It is viral (any operation on NaN yields a NaN)
+	- Comparison with `NaN` always fails: `double.NaN == (1.0/0.0) // false`
+- Check for a `NaN` using `double.IsNaN(x)`
+- It is possible to force .NET to throw exception on `NaN`: https://bit.ly/2BuWRVz
+
+## Representation Problems
+- Every integer within some range can be represented as a sum of powers of 2
+- Not every rational number can be represented this way 
+- 0.1 results in an infinite binary sequence
+	- 0.0001100110011001100110011001100110011001100...
+	- But if you `ToString()` it, you'll get "0.1"
+- Thus, some numbers are not exactly what you intend them to be 
+	- They can be slightly smaller or greater 
+- This can lead to surprising results
+	- `double d = 0.1 + 0.2; // 0.30000000000000004`
+	- `(0.1 + 0.2 == 0.3) // false`
+- Comparisons need to use a tolerance value 
+	- `if (Math.Abs(x - y) < 1e-8) { ... }` 
+	- In real world code (esp. iterative), tolerance values are hard to find
+
+# System.Decimal 
+- 128-bit decimal type 
+- Range from - to +9,228,162,514,264,337,593,543,950,335
+- Suitable for financial calculations 
+- Not subject to FP representation errors
+	- In other words, `0.1m + 0.2m == 0.3m` 
+- Significantly slower than FP calculations 
+- Not standardized/supported on other systems (e.g., GPU)
+
+	
+
+
 ```c#
 unchecked { 
 	var n = int.MinValue - 1;
@@ -63,7 +142,7 @@ checked {
 
 
 ## Detect Overflow Everywhere 
-
+d
 
 - There is no `auto-vectorization` free lunch. 
 - Use intrinsics for low-level control

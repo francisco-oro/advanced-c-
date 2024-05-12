@@ -2,38 +2,21 @@
 
 namespace _02_Reflection
 {
-    public class RepeatAttribute : Attribute
+    public class SystemTypeDemo
     {
-        public int Times { get; }
-
-        public RepeatAttribute(int times)
-        {
-            Times = times;
-        }
-
-
-    }
-
-
-    public class AttributeDemo
-    {
-        [Repeat(3)]
-        public void SomeMethod()
-        {
-
-        }
-
         public static void Main(string[] args)
         {
-            var sm = typeof(AttributeDemo).GetMethod("SomeMethod");
-            foreach (var att in sm.GetCustomAttributes(true)) 
-            {
-                Console.WriteLine("Found an attribute: " + att.GetType());
-                if (att is RepeatAttribute ra)
-                {
-                    Console.WriteLine($"Need to repeat {ra.Times} times");
-                }
-            }
+            Type t = typeof(int);
+            Console.WriteLine(t.GetMethods());
+            Type t2 = "hello".GetType();
+            Console.WriteLine(t2.FullName);
+            Console.WriteLine(t2.GetFields());
+            Console.WriteLine(t2.GetMethods());
+
+            var a = typeof(string).Assembly;
+            Console.WriteLine(a);
+            var types = a.GetTypes();
+            Console.WriteLine(types[10]);
         }
     }
 }

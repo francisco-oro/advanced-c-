@@ -196,55 +196,64 @@ Run-time behavior:
 - You can create a 64/128/256/...-bit vector using VectorXxx.Create()
 - `Var x = Vector128.Create(1.0f);`
 	- Creates an object of type `Vector128<float>`
-
+- Now you can use Sse/Avx classes to operate on this type 
+	- Assuming you have necessary level of support 
+- `Vector128<float> x = Vector128.Create(1.0f);`
+- `Vector128<float> y = Vector128.Create(1.0f);`
+- `var f = Sse.Add(x, y);`
+- No operator support: intrinsic calls map onto CPU instructions!
 	
-
-
-
+## Adding 4 Pairs of Floats 
 ```c#
-unchecked { 
-	var n = int.MinValue - 1;
-}
-```
-- This will compile just fine
-- Detect overflow at runtime 
-```c#
-checked {
-	try {
-		int x2 = int.MinValue - 1;
-	} catch(OverflowException e ){
-		Console.WriteLine(e.Message);
-	}
-
-}
+var v1 = Vector 128.Create(1.0f , 2.0f, 3.0f, 4.0f);
+var v2 = Vector 128.Create(1.0f , 2.0f, 4.0f, 8.0f);
+var sum = Sse.Add(v1, v2);
+Console.WriteLine(sum);
 ```
 
+## Division by Zero and Overflow 
+- SIMD is primarily used for FP calculations 
+- Division by zero is not a problem 
+	- Intrinsic division is only allowed for FP types which have infinity 
+- There is no overflow detection 
+	- Checked only works for C# ops, not intrinsics 
+	- Adding bytes 256 and 1 gives zero :)
 
-## Detect Overflow Everywhere 
-d
 
-- There is no `auto-vectorization` free lunch. 
-- Use intrinsics for low-level control
-	- Easy if you control hardware
-	- Very tedious if you don't know what CPU you'll be running on 
-- Use SIMD-enabled types 
-	- `Vector<T>` adapts to architecture
-	- Supports non-accelerated execution
-- You can combine SIMD and multithreading
-- GPGPU is likely to trump CPU SIMD calculations on non-divergent streamable loads 
-	- But GPUs are not programmable in C# 
-	- Very difficult to write GPU-neutral code 
-You can combine SIMD/multicore with GPGPU for more power
+# Vector<T>
 
-## Vector<T> Scenario 
+## From Intrinsisc to Numerics 
+- Working directly with SSE/AVX support levels, data types and intrinsics is far too much work for most people
+- They want to write simpler code and have it auto-vectorized using the most powerful available SIMD instructions
+	- Code may or may not be hardware accelerated	 
+- Say hello to `System.Numerics.Vectors`
+- What's in store: 
+	- Numeric-types: Complex, BigInteger 
+	- SIMD-accelerated types (float-based): Matrix3x2, Matrix4x4, Plane, Quaternion
+	- Common vector sizes (float-based): Vector2, Vector3, Vector4 
+	- General-purpose Vector<T>
+
+## Vector<T>
+- A generalization over VectorXxx<T> types where the size is not statically known 
+	- You may not know the type of CPU your program runs on 
+- T Can be a built-in numeric value type (integral, float, double)
+- Can own data or provide a view into an existing array
+- Check `Vector<T>.Count` for exact size
+	- On my machine, `Vector<int>.Count` gives 8
+	- This means we're using 256 bits (8 integers, each 32 bits long)
+- Hardware accelerated 
+	- Check `IsHardwareAccelerated` static member 
+- Use of intrinsics
+	- Addition and subtraction always use intrinsics 
+	- Multiplication for short, int, float and double
+	- Division for float and double 
+
+## Vector<T> Scenario
 - I want to add two arrays of bytes
-- Create and initialize arrays 
-```c#
-byte[] array1, array2, result;
-```
+- Create and initialize arrays `byte array1, array2, result;`
 - Determine how many fit into a `Vector<byte>`
 - Loop by register size
-- Use vector as a view into an array 
+- Use vector as a view into an array
 
 ```c#
 byte[] array1 = Enumerable.Range(1, 128).Select(x => (byte) x).ToArray()

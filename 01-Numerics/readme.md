@@ -119,7 +119,86 @@ Run-time behavior:
 - Significantly slower than FP calculations 
 - Not standardized/supported on other systems (e.g., GPU)
 
+# Vector Types 
+
+- The CPu has registers larger than 64 bit
+	- 128,256 or even 512 bit - depends on the CPU 
+- Those registers are not for data types with wider range
+- Instead, they are used for packed values 
+- A 128-bit register can pack
+	- 16 bytes 
+	- 4 int values 
+	- 4 float values 
+	- 2 double values 
+
+## Motivation
+- Processor instructions (e.g. add) have a cost
+	- Number of clock cycles 
+- Add < multiply < divide < square root 
+- Exact costs vary by CPU and data type (float vs. double)
+- A lot of effort is spent on optimization
+	- `ax^2 + bx => x(ax + b)` 
+- Operations need to be performed on sets of values 
+	- E.g., add two arrays 
+- Divide & conquer 
+- SIMD let us accelerate these calculations 
+	- In the context of a single CPU Core 
+
+## Vector Types 
+
+
+## Registers II 
+- SIMD = Single Instruction Multiple Data 
+- Modern CPUs provides several large registers for SIMD 
+- Registers vary in size (128, 256, 512 bits)
+	- Larger register = more data that can be packed 
+- Need to be supported by the CPU
+	- Implies compatibility issues  
+- You are unlikely to achieve full equivalence between ordinary and vectorized FP calculations 
+
+
+## Registers III 
+- SIMD technologies
+	- AMD: 3DNow!
+	- Intel: MMX, SSE 
+	- Both: AVX 
+- Streaming SIMD (Extensions SSE)
+	- 128-bit registers (xmm0...xmm7)
+- Advanced Vector Extensions (AVX)
+	- New instructions supported by AMD/Intel (since ~ 2011)
+	- AVX extends xmm to ymm (bits 128...255)
+	- AVX-512 futher adds zmm (bits 256...511)
+
+# SIMD Intrinsics 
+## Instructinos 
+- SIMD is supported with special instructions 
+- Integral & floating0point operations 
+- Scalar vs. packed data 
+	- addss adds just the low single-precision value 
+	- addps adds all four single-precision values 
+- How to use in .NET?
+	- Use hardware intrinsics (`System.Runtime.Intrinsics`)
+	- Use specific data types
+	- Use general `Vector<T>`
+
+## Instrinsics
+- Intrinsics are simple wrappers around SIMD types and operations 
+- `System.Runtime.Intrinsics` namespace
+- You can check the level of SIMD support using
+	- SSE classes (Sse, Sse2, SSe3, ...Ssse3 [not a typo!], Sse42)
+	- AVX classes (Avx, Avx2)
+- E.g., `if(Avx.IsSupported) { ... }`
+- If we do have support, then: 
+	- You can use static members (e.g. Avx2.Add()) 
+	- Those members operate on VectorXxx<T> types
+
+## Intrinsic Vector Types 
+- You can create a 64/128/256/...-bit vector using VectorXxx.Create()
+- `Var x = Vector128.Create(1.0f);`
+	- Creates an object of type `Vector128<float>`
+
 	
+
 
 
 ```c#

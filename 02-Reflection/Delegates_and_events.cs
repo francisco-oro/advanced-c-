@@ -1,26 +1,30 @@
-﻿//using System;
-//public class Demo
-//{
-//    public event EventHandler<int> MyEvent;
+﻿using System;
 
-//    public void Handler(object sender, int e)
-//    {
-//        Console.WriteLine($"I just got {e}");
-//    }
+namespace _02_Reflection
+{
+    public class Demo
+    {
+        public event EventHandler<int> MyEvent;
 
-//    public static void Main(string[] args)
-//    {
-//        var demo = new Demo();
+        public void Handler(object sender, int e)
+        {
+            Console.WriteLine($"I just got {e}");
+        }
 
-//        var eventInfo = typeof(Demo).GetEvent("MyEvent");
-//        var handlerMethod = demo.GetType().GetMethod("Handler");
+        public static void Demoo(string[] args)
+        {
+            var demo = new Demo();
 
-//        var handler = Delegate.CreateDelegate(
-//            eventInfo.EventHandlerType,
-//            null,
-//            handlerMethod);
+            var eventInfo = typeof(Demo).GetEvent("MyEvent");
+            var handlerMethod = demo.GetType().GetMethod("Handler");
 
-//        eventInfo.AddEventHandler(demo, handler);
-//        demo.MyEvent?.Invoke(null, 321);
-//    }
-//}
+            var handler = Delegate.CreateDelegate(
+                eventInfo.EventHandlerType,
+                null,
+                handlerMethod);
+
+            eventInfo.AddEventHandler(demo, handler);
+            demo.MyEvent?.Invoke(null, 321);
+        }
+    }
+}

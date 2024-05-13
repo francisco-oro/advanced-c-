@@ -2,7 +2,7 @@
 {
     public class ConstructionDemo
     {
-        public static void Main(string[] args)
+        public static void Demo(string[] args)
         {
             var t = typeof(bool );
             var b = Activator.CreateInstance( t );
@@ -30,6 +30,29 @@
             Console.WriteLine(str);
             var listType = Type.GetType("System.Collections.Generic.List`1");
             Console.WriteLine(listType);
+
+            var listOfIntType = listType.MakeGenericType(typeof(int));
+            var listOfIntCtor = listOfIntType.GetConstructor(Array.Empty<Type>());
+
+            Console.WriteLine(listOfIntCtor);
+            var theList = listOfIntCtor.Invoke(Array.Empty<object>());
+            Console.WriteLine(theList);
+
+            var charType = typeof(char);
+            Array.CreateInstance(charType, 10);
+
+            var charArrayType = charType.MakeArrayType();
+            Console.WriteLine(charArrayType);
+            Console.WriteLine(charArrayType.FullName);
+
+            var charArrayCtor = charArrayType.GetConstructor(new[] {typeof(int)});
+            Console.WriteLine(charArrayCtor);
+            var arr = charArrayCtor?.Invoke(new object?[] { 20 }).ToString();
+            Console.WriteLine(arr);
+            Console.WriteLine(arr.GetType().Name);
+
+            char[] arr2 = (char[])arr.Clone();
+            Console.WriteLine(arr2);
         }
     }
 }
